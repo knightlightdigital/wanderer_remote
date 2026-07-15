@@ -31,7 +31,7 @@ device_state = {
     "device_name": "WandererCoverV4",
     "firmware": 20250506,
     "close_limit": 0.0,
-    "open_limit": 180.0,
+    "open_limit": 283.0,
     "current_position": 0.0,
     "voltage": 12.2,
     "brightness": 0,

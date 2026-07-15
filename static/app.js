@@ -505,8 +505,9 @@ document.addEventListener("DOMContentLoaded", () => {
             asiairToggle.checked = state.asiair_mode;
             
             // Gauge Need Rotational Transformation
-            // Mapping: 0 deg = -90deg rotation, 180 deg = +90deg rotation
-            const needleRotation = state.current_position - 90;
+            // Mapping: 0 deg = -135deg rotation, 300 deg = +135deg rotation
+            const maxScale = Math.max(state.open_limit, 300.0);
+            const needleRotation = -135 + (state.current_position / maxScale) * 270.0;
             gaugeNeedle.style.transform = `rotate(${needleRotation}deg)`;
             gaugeNeedle.setAttribute("transform", `rotate(${needleRotation}, 100, 100)`);
             
@@ -551,8 +552,8 @@ document.addEventListener("DOMContentLoaded", () => {
             infoAsiair.textContent = "Offline";
             
             visAngle.textContent = "0.0";
-            gaugeNeedle.style.transform = "rotate(-90deg)"; // Closed rest position
-            gaugeNeedle.setAttribute("transform", "rotate(-90, 100, 100)");
+            gaugeNeedle.style.transform = "rotate(-135deg)"; // Closed rest position
+            gaugeNeedle.setAttribute("transform", "rotate(-135, 100, 100)");
         }
         
         // Refresh presets disable state
