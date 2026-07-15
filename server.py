@@ -464,6 +464,33 @@ def cover_auto_detect_close():
     send_device_command("100000")
     return {"status": "command_sent"}
 
+@app.post("/api/cover/stop")
+def cover_stop():
+    if not device_state["connected"]:
+        raise HTTPException(status_code=400, detail="Device not connected")
+        
+    # Halt movement
+    if device_state["is_moving"]:
+        if not device_state["is_mock"]:
+            try:
+                # Set limit to current position to trigger motor stop
+                if abs(device_state["target_position"] - device_state["open_limit"]) <= 1.0:
+                    cmd = str(int(device_state["current_position"] * 100 + 40000))
+                    send_device_command(cmd)
+                else:
+                    cmd = str(int(device_state["current_position"] * 100 + 10000))
+                    send_device_command(cmd)
+            except Exception as e:
+                log_message("ERROR", f"Failed to send stop limit override: {e}")
+        
+        # Reset local states
+        device_state["is_moving"] = False
+        log_message("SYSTEM", f"Halted cover motion at {device_state['current_position']}°")
+        broadcast_telemetry()
+        
+    return {"status": "stop_sent"}
+
+
 @app.post("/api/cover/limits")
 def cover_set_limits(req: LimitsRequest):
     if not device_state["connected"]:

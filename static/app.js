@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const btnOpen = document.getElementById("btnOpen");
     const btnClose = document.getElementById("btnClose");
+    const btnStop = document.getElementById("btnStop");
     
     const heaterPowerVal = document.getElementById("heaterPowerVal");
     const heaterSlider = document.getElementById("heaterSlider");
@@ -122,6 +123,13 @@ document.addEventListener("DOMContentLoaded", () => {
         postData("/api/cover/close")
             .then(() => appendLogLine("system", "Sent Close Cover command."))
             .catch(err => appendLogLine("error", `Close Cover failed: ${err.message}`));
+    });
+
+    btnStop.addEventListener("click", () => {
+        btnStop.disabled = true;
+        postData("/api/cover/stop")
+            .then(() => appendLogLine("system", "Sent STOP Cover Motion command."))
+            .catch(err => appendLogLine("error", `Stop command failed: ${err.message}`));
     });
 
     // Dew Heater Slider Events
@@ -411,6 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             btnOpen.disabled = isMoving;
             btnClose.disabled = isMoving;
+            btnStop.disabled = !isMoving;
             
             if (isMoving) {
                 document.querySelector(".position-visualizer").classList.add("is-moving");
@@ -525,6 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Disable all controls
             btnOpen.disabled = true;
             btnClose.disabled = true;
+            btnStop.disabled = true;
             heaterSlider.disabled = true;
             brightnessSlider.disabled = true;
             brightnessInput.disabled = true;
