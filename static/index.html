@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderer Astro v4 Remote Controller</title>
+    <!-- Google Fonts Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="cosmos-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="icon">🔭</span>
+                <div class="title-group">
+                    <h1>Wanderer Astro</h1>
+                    <p class="subtitle">v4 EC Pro Flats Panel Controller</p>
+                </div>
+            </div>
+            <div class="connection-status-pill disconnected" id="headerStatusPill">
+                <span class="status-indicator"></span>
+                <span class="status-text" id="headerStatusText">Disconnected</span>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT PANEL: TELEMETRY & CONNECTIVITY -->
+            <section class="grid-col-1">
+                <!-- Port connection card -->
+                <div class="card glass-card">
+                    <h2 class="card-title"><span class="card-icon">🔌</span>Connection Control</h2>
+                    <div class="connection-form">
+                        <div class="form-group">
+                            <label for="portSelect">USB/COM Port</label>
+                            <div class="port-select-row">
+                                <select id="portSelect" class="styled-select">
+                                    <option value="" disabled selected>Select Port...</option>
+                                </select>
+                                <button id="btnScan" class="btn btn-secondary icon-btn" title="Scan available ports">🔄</button>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button id="btnConnect" class="btn btn-primary w-100" disabled>Connect</button>
+                            <button id="btnDisconnect" class="btn btn-danger w-100 hidden">Disconnect</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telemetry grid cards -->
+                <div class="telemetry-box">
+                    <div class="card glass-card tele-card">
+                        <span class="tele-label">Position</span>
+                        <div class="tele-val-container">
+                            <span class="tele-value" id="telePos">0.0</span>
+                            <span class="tele-unit">°</span>
+                        </div>
+                        <span class="tele-desc" id="telePosState">Closed</span>
+                    </div>
+
+                    <div class="card glass-card tele-card" id="cardVoltage">
+                        <span class="tele-label">Input Voltage</span>
+                        <div class="tele-val-container">
+                            <span class="tele-value" id="teleVolts">0.0</span>
+                            <span class="tele-unit">V</span>
+                        </div>
+                        <span class="tele-desc" id="teleVoltsState">Offline</span>
+                    </div>
+                </div>
+
+                <!-- Device Info Card -->
+                <div class="card glass-card info-card">
+                    <h2 class="card-title"><span class="card-icon">ℹ️</span>Device Telemetry</h2>
+                    <ul class="info-list">
+                        <li>
+                            <span class="info-lbl">Device Model:</span>
+                            <span class="info-val" id="infoModel">—</span>
+                        </li>
+                        <li>
+                            <span class="info-lbl">Firmware:</span>
+                            <span class="info-val" id="infoFirmware">—</span>
+                        </li>
+                        <li>
+                            <span class="info-lbl">ASIAIR Mode:</span>
+                            <span class="info-val" id="infoAsiair">Offline</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- CENTER PANEL: ANGLE VISUALIZER & COVER CONTROLS -->
+            <section class="grid-col-2">
+                <!-- Visualizer and Main action -->
+                <div class="card glass-card visualizer-card">
+                    <h2 class="card-title"><span class="card-icon">🦾</span>Cover Mechanism</h2>
+                    
+                    <div class="position-visualizer">
+                        <svg class="gauge-svg" viewBox="0 0 200 120">
+                            <!-- Background arc -->
+                            <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" />
+                            <!-- Active/Current angle representation -->
+                            <line class="gauge-needle" id="gaugeNeedle" x1="100" y1="100" x2="100" y2="20" />
+                            <circle class="gauge-center" cx="100" cy="100" r="10" />
+                        </svg>
+                        <div class="visualizer-angle-read">
+                            <span id="visAngle">0.0</span>°
+                        </div>
+                    </div>
+
+                    <div class="btn-group-row">
+                        <button id="btnOpen" class="btn btn-action-open" disabled>
+                            <span class="btn-text">Open Cover</span>
+                            <span class="btn-subtext">Saves optics from dust</span>
+                        </button>
+                        <button id="btnClose" class="btn btn-action-close" disabled>
+                            <span class="btn-text">Close Cover</span>
+                            <span class="btn-subtext">Takes Flat frames</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dew Heater controller -->
+                <div class="card glass-card">
+                    <div class="card-title-row">
+                        <h2 class="card-title"><span class="card-icon">🔥</span>Dew Heater Control</h2>
+                        <span class="badge" id="heaterPowerVal">Off</span>
+                    </div>
+                    
+                    <div class="control-body">
+                        <div class="slider-container">
+                            <input type="range" id="heaterSlider" min="0" max="150" value="0" class="styled-slider" disabled>
+                            <div class="slider-labels">
+                                <span>Off</span>
+                                <span>Low</span>
+                                <span>Medium</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div class="quick-btns">
+                            <button class="btn btn-quick-ht" data-val="0" disabled>Off</button>
+                            <button class="btn btn-quick-ht" data-val="50" disabled>33%</button>
+                            <button class="btn btn-quick-ht" data-val="100" disabled>66%</button>
+                            <button class="btn btn-quick-ht" data-val="150" disabled>Max</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: FLATS LIGHT & CALIBRATION -->
+            <section class="grid-col-3">
+                <!-- Flat field light controller -->
+                <div class="card glass-card light-control-card">
+                    <div class="card-title-row">
+                        <h2 class="card-title"><span class="card-icon">💡</span>Flats Light Panel</h2>
+                        <div class="switch-container">
+                            <span class="switch-label" id="lightStateText">OFF</span>
+                            <label class="switch">
+                                <input type="checkbox" id="lightToggle" disabled>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-body">
+                        <!-- Brightness slider -->
+                        <div class="form-group brightness-form-group">
+                            <div class="brightness-slider-row">
+                                <input type="range" id="brightnessSlider" min="0" max="255" value="0" class="styled-slider" disabled>
+                                <input type="number" id="brightnessInput" min="0" max="255" value="0" class="styled-num-input" disabled>
+                            </div>
+                        </div>
+
+                        <!-- Filter presets section -->
+                        <div class="preset-section">
+                            <div class="preset-header">
+                                <span class="preset-title">Filter Presets</span>
+                                <button id="btnSavePresets" class="btn-text-only" title="Save current brightness levels to local presets">💾 Save Custom Values</button>
+                            </div>
+                            <div class="presets-grid" id="presetsGrid">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Limits & settings -->
+                <div class="card glass-card">
+                    <h2 class="card-title"><span class="card-icon">⚙️</span>Calibration & Limits</h2>
+                    
+                    <div class="settings-form">
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="closeLimitInput">Close Limit (°)</label>
+                                <input type="number" id="closeLimitInput" class="styled-num-input w-100" min="0" max="90" step="0.5" value="0.0" disabled>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="openLimitInput">Open Limit (°)</label>
+                                <input type="number" id="openLimitInput" class="styled-num-input w-100" min="90" max="180" step="0.5" value="180.0" disabled>
+                            </div>
+                        </div>
+                        <button id="btnSetLimits" class="btn btn-secondary w-100 mb-2" disabled>Set Custom Limits</button>
+                        
+                        <div class="btn-row gap-2">
+                            <button id="btnAutoClose" class="btn btn-outline flex-1 text-xs" disabled>Auto-Detect Close</button>
+                            <button id="btnAutoOpen" class="btn btn-outline flex-1 text-xs" disabled>Auto-Detect Open</button>
+                        </div>
+
+                        <hr class="divider">
+
+                        <div class="form-row align-center justify-between">
+                            <span class="label-with-desc">
+                                <strong>ASIAIR Control Mode</strong>
+                                <small>Passes control to ASIAIR port triggers</small>
+                            </span>
+                            <label class="switch">
+                                <input type="checkbox" id="asiairToggle" disabled>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FULL-WIDTH CONSOLE / LOGS -->
+        <footer class="app-console card glass-card">
+            <div class="console-header">
+                <h3><span class="card-icon">💻</span>Terminal Logs</h3>
+                <div class="console-actions">
+                    <button id="btnClearConsole" class="btn btn-secondary btn-sm">Clear</button>
+                    <label class="checkbox-container text-xs">
+                        <input type="checkbox" id="chkAutoScroll" checked>
+                        <span>Auto-scroll</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="console-body" id="consoleBody">
+                <div class="console-line system">[SYSTEM] Dashboard initialized. Select a port and connect.</div>
+            </div>
+
+            <div class="console-input-row">
+                <span class="prompt">$</span>
+                <input type="text" id="customCommandInput" placeholder="Send custom command to device (e.g. 1001 to open)..." disabled>
+                <button id="btnSendCustom" class="btn btn-primary btn-sm" disabled>Send</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script loading -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

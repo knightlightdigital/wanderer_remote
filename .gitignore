@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv
+venv/
+ENV/
+env/
+
+# Uvicorn/Logs
+*.log
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Presets local cache
+.local_presets/
