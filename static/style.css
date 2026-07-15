@@ -572,6 +572,13 @@ label {
     margin-top: 0.4rem;
 }
 
+.btn-row {
+    display: flex;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+
 .quick-btns {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
