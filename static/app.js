@@ -61,8 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Blue": 140,
         "H-Alpha": 250,
         "OIII": 250,
-        "SII": 250,
-        "Dark Flat": 0
+        "SII": 250
     };
 
     // Load custom presets if saved
