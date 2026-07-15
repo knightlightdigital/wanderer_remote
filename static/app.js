@@ -155,20 +155,32 @@ document.addEventListener("DOMContentLoaded", () => {
     lightToggle.addEventListener("change", (e) => {
         const isChecked = e.target.checked;
         if (isChecked) {
-            // Restore current slider brightness
-            const val = parseInt(brightnessSlider.value);
+            let val = parseInt(brightnessSlider.value);
+            if (val === 0) {
+                val = 128;
+                brightnessSlider.value = val;
+                brightnessInput.value = val;
+            }
             postData("/api/flat-panel/brightness", { brightness: val })
-                .then(() => appendLogLine("system", `Flat panel turned ON (Brightness: ${val})`))
+                .then(() => {
+                    appendLogLine("system", `Flat panel turned ON (Brightness: ${val})`);
+                    lightStateText.textContent = "ON";
+                })
                 .catch(err => {
                     appendLogLine("error", `Flat panel turn ON failed: ${err.message}`);
                     lightToggle.checked = false;
+                    lightStateText.textContent = "OFF";
                 });
         } else {
             postData("/api/flat-panel/off")
-                .then(() => appendLogLine("system", "Flat panel turned OFF"))
+                .then(() => {
+                    appendLogLine("system", "Flat panel turned OFF");
+                    lightStateText.textContent = "OFF";
+                })
                 .catch(err => {
                     appendLogLine("error", `Flat panel turn OFF failed: ${err.message}`);
                     lightToggle.checked = true;
+                    lightStateText.textContent = "ON";
                 });
         }
     });

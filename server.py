@@ -256,6 +256,18 @@ def send_device_command(cmd: str):
         device_state["target_position"] = device_state["close_limit"]
         last_movement_time = time.time()
         
+    # Intercept brightness and heater settings to update state optimistically (e.g. for legacy device support)
+    try:
+        val = int(cmd)
+        if 0 <= val <= 255:
+            device_state["brightness"] = val
+        elif val == 9999:
+            device_state["brightness"] = 0
+        elif 2000 <= val <= 2150:
+            device_state["heater"] = val - 2000
+    except ValueError:
+        pass
+
     if device_state["is_mock"]:
         # Execute mock logic based on command codes
         process_mock_command(cmd)
