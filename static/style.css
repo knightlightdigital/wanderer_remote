@@ -444,6 +444,7 @@ label {
     stroke: var(--primary);
     stroke-width: 4px;
     stroke-linecap: round;
+    transform-box: view-box;
     transform-origin: 100px 100px;
     transform: rotate(0deg); /* 0 to 180 degrees mapping */
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);

@@ -496,6 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Mapping: 0 deg = -90deg rotation, 180 deg = +90deg rotation
             const needleRotation = state.current_position - 90;
             gaugeNeedle.style.transform = `rotate(${needleRotation}deg)`;
+            gaugeNeedle.setAttribute("transform", `rotate(${needleRotation}, 100, 100)`);
             
         } else {
             // Offline layout
@@ -539,6 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             visAngle.textContent = "0.0";
             gaugeNeedle.style.transform = "rotate(-90deg)"; // Closed rest position
+            gaugeNeedle.setAttribute("transform", "rotate(-90, 100, 100)");
         }
         
         // Refresh presets disable state
